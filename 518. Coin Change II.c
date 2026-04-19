@@ -1,27 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
-int compare(const void* p1,const void* p2)
+int change(int amount, int* coins, int n)
 {
-    int* a=(int*)p1;
-    int* b=(int*)p2;
-    return *a-*b;
-}
-
-int change(int amount, int* coins, int coinsSize)
-{
-    int i,j,temp;
-    int* list=(int*)calloc(amount+1,sizeof(int));
-    qsort(coins,coinsSize,sizeof(int),compare);
-    list[0]=1;
-    for(i=0;i<coinsSize&&coins[i]<=amount;i++)
+    long long dp[5001] = {0};
+    dp[0] = 1;
+    for (int i = 0; i < n; i++)
     {
-        for(j=coins[i];j<=amount;j++)
+        for (int j = coins[i]; j <= amount; j++)
         {
-            list[j]=list[j]+list[j-coins[i]];
+            if (dp[j] > INT_MAX)
+            {
+                break;
+            }
+            dp[j] += dp[j - coins[i]];
         }
     }
-    temp=list[amount];
-    free(list);
-    return temp;
+    return (int)dp[amount];
 }
